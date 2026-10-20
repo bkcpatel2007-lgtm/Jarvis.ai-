@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JARVIS AI</title>
+
+<style>
+body {
+  background: #07111f;
+  color: #00eaff;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 25px 15px;
+}
+h1 {
+  margin-top: 35px;
+  letter-spacing: 5px;
+}
+.circle {
+  width: 180px;
+  height: 180px;
+  border: 3px solid #00eaff;
+  border-radius: 50%;
+  margin: 35px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 55px;
+  box-shadow: 0 0 25px #00eaff;
+}
+button, input {
+  padding: 13px;
+  margin: 7px;
+  border-radius: 10px;
+  border: 1px solid #00eaff;
+  background: #102338;
+  color: white;
+  font-size: 16px;
+}
+button { cursor: pointer; }
+#reply {
+  color: white;
+  margin: 25px auto;
+  max-width: 500px;
+  line-height: 1.6;
+}
+</style>
+</head>
+
+<body>
+<h1>JARVIS AI</h1>
+<p>Your Personal Voice Assistant</p>
+
+<div class="circle">🤖</div>
+
+<button onclick="startListening()">🎤 Speak to Jarvis</button>
+<br>
+
+<input id="command" placeholder="Type your command">
+<button onclick="runCommand()">Send</button>
+
+<div id="reply">Hello! I am Jarvis. How can I help you?</div>
+
+<script>
+const replyBox = document.getElementById("reply");
+
+function speak(text) {
+  replyBox.innerText = text;
+
+  if ("speechSynthesis" in window) {
+    speechSynthesis.cancel();
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = "en-IN";
+    speech.rate = 0.95;
+    speechSynthesis.speak(speech);
+  }
+}
+
+function startListening() {
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    speak("Voice recognition is not supported here. Try Google Chrome.");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "en-IN";
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    replyBox.innerText = "Listening... Speak now.";
+  };
+
+  recognition.onresult = (event) => {
+    const text = event.results[0][0].transcript;
+    document.getElementById("command").value = text;
+    runCommand();
+  };
+
+  recognition.onerror = () => {
+    speak("I could not hear you. Please try again.");
+  };
+
+  recognition.start();
+}
+
+function runCommand() {
+  const input = document.getElementById("command");
+  const command = input.value.toLowerCase().trim();
+
+  if (!command) {
+    speak("Please tell me a command.");
+    return;
+  }
+
+  if (command.includes("hello") || command.includes("hi jarvis")) {
+    speak("Hello! I am Jarvis. How can I help you?");
+  }
+
+  else if (command.includes("your name")) {
+    speak("My name is Jarvis, your personal assistant.");
+  }
+
+  else if (command.includes("time")) {
+    speak("The time is " +
+      new Date().toLocaleTimeString("en-IN"));
+  }
+
+  else if (command.includes("date")) {
+    speak("Today's date is " +
+      new Date().toLocaleDateString("en-IN"));
+  }
+
+  else if (command.includes("open youtube")) {
+    speak("Opening YouTube.");
+    window.open("https://www.youtube.com", "_blank");
+  }
+
+  else if (command.includes("open google")) {
+    speak("Opening Google.");
+    window.open("https://www.google.com", "_blank");
+  }
+
+  else if (command.includes("open whatsapp")) {
+    speak("Opening WhatsApp.");
+    window.open("https://web.whatsapp.com", "_blank");
+  }
+
+  else if (command.includes("how are you")) {
+    speak("I am functioning properly. Thank you!");
+  }
+
+  else if (command.includes("help")) {
+    speak("You can ask me the time, date, or tell me to open Google or YouTube.");
+  }
+
+  else {
+    speak("Sorry, I do not know that command yet. Try asking for the time, date, Google, or YouTube.");
+  }
+
+  input.value = "";
+}
+</script>
+</body>
+</html>
