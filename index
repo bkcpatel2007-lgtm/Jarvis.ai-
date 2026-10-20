@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JARVIS AI</title>
+<style>
+body {
+  background: #07111f;
+  color: #70e7ff;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 25px 15px;
+}
+h1 { letter-spacing: 6px; }
+.circle {
+  width: 140px;
+  height: 140px;
+  border: 3px solid #70e7ff;
+  border-radius: 50%;
+  margin: 30px auto;
+  display: grid;
+  place-items: center;
+  font-size: 45px;
+  box-shadow: 0 0 25px #167da8;
+}
+button, input {
+  padding: 13px;
+  margin: 8px;
+  border-radius: 10px;
+  font-size: 16px;
+}
+button {
+  background: #10334a;
+  color: #70e7ff;
+  border: 1px solid #70e7ff;
+}
+input {
+  width: 85%;
+  background: #0c1d30;
+  color: white;
+  border: 1px solid #70e7ff;
+}
+#answer { color: white; }
+</style>
+</head>
+<body>
+<h1>J.A.R.V.I.S</h1>
+<p>PERSONAL VOICE ASSISTANT</p>
+<div class="circle">◉</div>
+<p id="status">System Ready</p>
+<button onclick="listen()">🎙️ Talk to Jarvis</button>
+<br>
+<input id="cmd" placeholder="Type a command">
+<br>
+<button onclick="run()">Send Command</button>
+<p id="answer">Hello! I am Jarvis.</p>
+
+<script>
+function speak(text) {
+  document.getElementById("answer").textContent = text;
+  if ("speechSynthesis" in window) {
+    speechSynthesis.cancel();
+    let msg = new SpeechSynthesisUtterance(text);
+    msg.lang = "en-IN";
+    speechSynthesis.speak(msg);
+  }
+}
+
+function listen() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    speak("Voice input is unavailable. Please type your command.");
+    return;
+  }
+  let r = new SR();
+  r.lang = "en-IN";
+  r.onstart = () => document.getElementById("status").textContent = "Listening...";
+  r.onresult = e => {
+    document.getElementById("cmd").value = e.results[0][0].transcript;
+    run();
+  };
+  r.onerror = () => document.getElementById("status").textContent = "Try again";
+  r.onend = () => document.getElementById("status").textContent = "System Ready";
+  r.start();
+}
+
+function run() {
+  let c = document.getElementById("cmd").value.toLowerCase().trim();
+
+  if (c.includes("hello") || c === "hi") {
+    speak("Hello! Jarvis is ready.");
+  } else if (c.includes("time")) {
+    speak("The time is " + new Date().toLocaleTimeString("en-IN"));
+  } else if (c.includes("date") || c.includes("today")) {
+    speak("Today's date is " + new Date().toLocaleDateString("en-IN"));
+  } else if (c.includes("open youtube")) {
+    speak("Opening YouTube");
+    window.open("https://m.youtube.com", "_blank");
+  } else if (c.includes("open google")) {
+    speak("Opening Google");
+    window.open("https://google.com", "_blank");
+  } else if (c.includes("your name")) {
+    speak("My name is Jarvis, your personal assistant.");
+  } else if (c.includes("help")) {
+    speak("Try hello, time, date, open YouTube, or open Google.");
+  } else {
+    speak("Sorry, I do not know that command yet.");
+  }
+}
+</script>
+</body>
+</html>
+javis ai 
